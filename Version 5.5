@@ -1,0 +1,424 @@
+'BASIC Window Generator System
+'2015 Noah Enyart
+'General Revision 2
+'Notes: To remove an option, please eliminate the respective CASE
+'and its parts in subs MOVEUP and MOVEDOWN.
+'to add an option, add a value for the string, detail, and location, and
+'add a CASE for MOVEUP or MOVEDOWN, following the pattern (should be simple)
+'to change values: all values should be editable and close to top of main module
+DECLARE SUB Ver (v$, c#)
+DECLARE SUB SEP (axis#)
+DECLARE SUB Detail (Text$)
+DECLARE SUB MOVEUP ()
+DECLARE SUB ACTION ()
+DECLARE SUB MOVEDOWN ()
+DECLARE SUB Title (Txt$, clr#)
+DECLARE SUB MSG (Text$, vert#)
+DECLARE SUB MESG (Text$, vert#)
+DECLARE SUB SElECTED (Text$, vert#)
+DECLARE SUB MAIN (Text$, c#)
+DECLARE SUB PAR (Text$, vert#, hori#, c#)
+DEFINT A-Z
+SCREEN 0
+DIM SHARED bgc AS DOUBLE
+bgc = 11 'background color
+COLOR 7, bgc
+CLS
+DIM SHARED String1 AS STRING 'strings for choices
+DIM SHARED String2 AS STRING
+DIM SHARED String3 AS STRING
+DIM SHARED String4 AS STRING
+DIM SHARED String5 AS STRING
+DIM SHARED String6 AS STRING
+DIM SHARED String7 AS STRING
+DIM SHARED Detail1 AS STRING 'strings for details shown when selected
+DIM SHARED Detail2 AS STRING
+DIM SHARED Detail3 AS STRING
+DIM SHARED Detail4 AS STRING
+DIM SHARED Detail5 AS STRING
+DIM SHARED Detail6 AS STRING
+DIM SHARED Detail7 AS STRING
+DIM SHARED LOC1 AS DOUBLE 'how far down a choice is
+DIM SHARED LOC2 AS DOUBLE
+DIM SHARED LOC3 AS DOUBLE
+DIM SHARED LOC4 AS DOUBLE
+DIM SHARED LOC5 AS DOUBLE
+DIM SHARED LOC6 AS DOUBLE
+DIM SHARED LOC7 AS DOUBLE
+DIM SHARED BorderColor AS DOUBLE
+DIM SHARED pushed AS DOUBLE 'how far along x-axis all choices are >=0
+
+DIM SHARED CURRENT AS DOUBLE 'current selected choice
+DIM SHARED BorderType AS DOUBLE '1 = single line, 2 = double line
+DIM SHARED bgtype AS DOUBLE '1 = full, 0 = solid
+DIM w AS DOUBLE 'counter for build of window
+DIM s AS DOUBLE 'counter for vertical shadow
+DIM t AS DOUBLE 'outline/corner
+DIM SHARED winx AS DOUBLE 'window along x-axis
+DIM SHARED winy AS DOUBLE 'window along y-axis
+DIM SHARED winw AS DOUBLE 'width of window
+DIM SHARED winh AS DOUBLE 'height of window
+DIM SHARED winf AS DOUBLE
+DIM SHARED winb AS DOUBLE
+'dont mess with this
+DIM SHARED CornerTL AS STRING
+DIM SHARED CornerTR  AS STRING
+DIM SHARED CornerBL AS STRING
+DIM SHARED CornerBR AS STRING
+DIM SHARED BorderH  AS STRING
+DIM SHARED BorderV  AS STRING
+DIM SHARED df AS DOUBLE
+DIM SHARED db AS DOUBLE
+DIM SHARED mb AS DOUBLE
+
+CURRENT = 1
+
+IF BorderType = 1 THEN
+CornerTL = "Ú"
+CornerTR = "¿"
+CornerBL = "À"
+CornerBR = "Ù"
+BorderH = "Ä"
+BorderV = "³"
+ELSE
+CornerTL = "É"
+CornerTR = "»"
+CornerBL = "È"
+CornerBR = "¼"
+BorderH = "Í"
+BorderV = "º"
+END IF
+
+'LOOK BELOW, THIS IS YOUR VARIABLE GROUP. YOU CAN EDIT THIS
+
+LOC1 = 3 'location (y axis) of choice
+LOC2 = 4
+LOC3 = 5
+LOC4 = 6
+LOC5 = 7
+LOC6 = 8
+LOC7 = 10
+String1 = "alhpa" 'set of strings for choices
+String2 = "bravo"
+String3 = "charlie"
+String4 = "delta"
+String5 = "echo"
+String6 = "foxtrot"
+String7 = "Exit"
+Detail1 = "this is the first choice"
+Detail2 = "this is the second choice"
+Detail3 = "this is the third choice"
+Detail4 = "this is the fourth choice"
+Detail5 = "this is the fifth choice"
+Detail6 = "this is the sixth choice"
+Detail7 = "exit the menu"
+
+winx = 30 'setting main variables to whatever
+winy = 6
+winw = 20
+winh = 12
+winf = 14 'window forecolor i dont care
+winb = 1 'window backcolor can be set to whatever
+df = 10 'detail text color
+db = 0 'detail backcolor
+mb = 1 'title bar background color
+BorderType = 1
+BorderColor = 4
+pushed = 0
+
+IF BorderType = 1 THEN
+CornerTL = "Ú"
+CornerTR = "¿"
+CornerBL = "À"
+CornerBR = "Ù"
+BorderH = "Ä"
+BorderV = "³"
+ELSE
+CornerTL = "É"
+CornerTR = "»"
+CornerBL = "È"
+CornerBR = "¼"
+BorderH = "Í"
+BorderV = "º"
+END IF
+
+'the below vars are counters, dont edit
+w = winy
+s = winy
+t = winy
+FOR w = winy TO winy + winh - 1 STEP 1
+LOCATE w, winx
+COLOR winb, 0
+PRINT STRING$(winw, "Û")
+COLOR 0, 7
+LOCATE winy + winh, winx + 1
+PRINT STRING$(winw - 1, "Û")
+NEXT w
+FOR s = winy + 1 TO winy + winh STEP 1
+LOCATE s, winx + winw
+PRINT "Û"
+NEXT s
+FOR t = winy TO winy + winh - 2 STEP 1
+COLOR BorderColor, winb
+LOCATE winy, winx
+PRINT CornerTL
+LOCATE winy, winx + 1
+PRINT STRING$(winw - 2, BorderH)
+LOCATE winy, winx + winw - 1
+PRINT CornerTR
+LOCATE winy + winh - 1, winx
+PRINT CornerBL
+LOCATE winy + winh - 1, winx + winw - 1
+PRINT CornerBR
+LOCATE winy + winh - 1, winx + 1
+PRINT STRING$(winw - 2, BorderH)
+LOCATE t, winx
+PRINT BorderV
+LOCATE t, winx + winw - 1
+PRINT BorderV
+NEXT t
+
+COLOR 7, 0
+SElECTED String1, LOC1
+SEP 9
+MSG String2, LOC2
+MSG String3, LOC3
+MSG String4, LOC4
+MSG String5, LOC5
+MSG String6, LOC6
+MSG String7, LOC7
+
+Title "my title", 10
+Detail Detail1
+MAIN "HELLO WORLD", 11
+Ver "5.40", 13
+
+'keyboard buffer
+DO
+SELECT CASE (INKEY$)
+CASE CHR$(0) + CHR$(80)
+MOVEDOWN
+CASE CHR$(0) + CHR$(72)
+MOVEUP
+CASE CHR$(13)
+ACTION
+END SELECT
+LOOP
+
+SUB ACTION
+SELECT CASE CURRENT
+CASE 7
+COLOR , 0
+CLS
+END
+CASE 1
+PLAY "t120o1l16b9n0baan0bn0bn0baaan0b9n0baan0b"
+END SELECT
+END SUB
+
+SUB Detail (Text$)
+COLOR db, 0 'first op=backgroundcolor
+LOCATE 2, 1
+PRINT STRING$(80, "Û")
+COLOR df, db  'first op=forecolor
+LOCATE 2, 3
+PRINT Text$
+END SUB
+
+SUB MAIN (Text$, c#)
+COLOR mb, 0
+LOCATE 1, 1
+PRINT STRING$(80, "Û")
+LOCATE 1, 40 - (LEN(Text$) / 2 + .5)
+COLOR c#, mb
+PRINT " " + Text$'writes title bar text
+END SUB
+
+SUB MOVEDOWN
+SELECT CASE CURRENT
+CASE 1
+COLOR winf, winb
+LOCATE winy + LOC1 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC2 - 1, winx + 2
+PRINT STRING$(winw - 3, " ")
+MSG String1, LOC1
+SElECTED String2, LOC2
+CURRENT = 2
+Detail Detail2
+CASE 2
+COLOR winf, winb
+LOCATE winy + LOC2 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC3 - 1, winx + 1
+PRINT " "
+MSG String2, LOC2
+SElECTED String3, LOC3
+CURRENT = 3
+Detail Detail3
+CASE 3
+COLOR winf, winb
+LOCATE winy + LOC3 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC4 - 1, winx + 1
+PRINT " "
+MSG String3, LOC3
+SElECTED String4, LOC4
+CURRENT = 4
+Detail Detail4
+CASE 4
+COLOR winf, winb
+LOCATE winy + LOC4 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC5 - 1, winx + 1
+PRINT " "
+MSG String4, LOC4
+SElECTED String5, LOC5
+CURRENT = 5
+Detail Detail5
+CASE 5
+COLOR winf, winb
+LOCATE winy + LOC5 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC6 - 1, winx + 1
+PRINT " "
+MSG String5, LOC5
+SElECTED String6, LOC6
+CURRENT = 6
+Detail Detail6
+CASE 6
+COLOR winf, winb
+LOCATE winy + LOC6 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC7 - 1, winx + 1
+PRINT " "
+MSG String6, LOC6
+SElECTED String7, LOC7
+CURRENT = 7
+Detail Detail7
+END SELECT
+END SUB
+
+SUB MOVEUP
+SELECT CASE CURRENT
+
+CASE 2
+COLOR winf, winb
+LOCATE winy + LOC1 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC2 - 1, winx + 1 + pushed
+PRINT " "
+MSG String2, LOC2
+SElECTED String1, LOC1
+CURRENT = 1
+Detail Detail1
+CASE 3
+COLOR winf, winb
+LOCATE winy + LOC2 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC3 - 1, winx + 1 + pushed
+PRINT " "
+MSG String3, LOC3
+SElECTED String2, LOC2
+CURRENT = 2
+Detail Detail2
+CASE 4
+COLOR winf, winb
+LOCATE winy + LOC3 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC4 - 1, winx + 1 + pushed
+PRINT " "
+MSG String4, LOC4
+SElECTED String3, LOC3
+CURRENT = 3
+Detail Detail3
+CASE 5
+COLOR winf, winb
+LOCATE winy + LOC4 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC5 - 1, winx + 1 + pushed
+PRINT " "
+MSG String5, LOC5
+SElECTED String4, LOC4
+CURRENT = 4
+Detail Detail4
+CASE 6
+COLOR winf, winb
+LOCATE winy + LOC5 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC6 - 1, winx + 1 + pushed
+PRINT " "
+MSG String6, LOC6
+SElECTED String5, LOC5
+CURRENT = 5
+Detail Detail5
+CASE 7
+COLOR winf, winb
+LOCATE winy + LOC6 - 1, winx + 1
+PRINT STRING$(winw - 3, " ")
+LOCATE winy + LOC7 - 1, winx + 1 + pushed
+PRINT " "
+MSG String7, LOC7
+SElECTED String6, LOC6
+CURRENT = 6
+Detail Detail6
+END SELECT
+END SUB
+
+SUB MSG (Text$, vert#)
+COLOR winf, winb
+LOCATE winy + vert# - 1, winx + pushed + 2
+PRINT Text$
+END SUB
+
+SUB PAR (Text$, vert#, hori#, t#)
+COLOR t#, bgc
+LOCATE vert#, hori#
+PRINT Text$
+END SUB
+
+SUB SElECTED (Text$, vert#)
+COLOR winf, winb
+LOCATE winy + vert# - 1, winx + pushed + 1
+PRINT STRING$(LEN(Text$), "Û")
+COLOR winb, winf
+LOCATE winy + vert# - 1, winx + pushed + 1
+PRINT ""
+LOCATE winy + vert# - 1, winx + pushed + 2
+PRINT Text$
+
+END SUB
+
+SUB SEP (axis#) 'separator on window
+COLOR BorderColor, winb
+IF BorderType = 1 THEN
+LOCATE winy + axis# - 1, winx
+PRINT "Ã"
+LOCATE winy + axis# - 1, winx + winw - 1
+PRINT "´"
+LOCATE winy + axis# - 1, winx + 1
+PRINT STRING$(winw - 2, "Ä")
+ELSEIF BorderType = 2 THEN
+LOCATE winy + axis# - 1, winx
+PRINT "Ç"
+LOCATE winy + axis# - 1, winx + winw - 1
+PRINT "¶"
+LOCATE winy + axis# - 1, winx + 1
+PRINT STRING$(winw - 2, "Ä")
+END IF
+
+
+END SUB
+
+SUB Title (Txt$, clr#)
+COLOR clr#, winb
+LOCATE winy, winx + winw / 2 + .5 - (LEN(Txt$) / 2 + .5)
+PRINT Txt$
+END SUB
+
+SUB Ver (v$, c#)
+COLOR c#, mb
+LOCATE 1, 80 - LEN("v   ")
+PRINT "v"; v$
+END SUB
+
